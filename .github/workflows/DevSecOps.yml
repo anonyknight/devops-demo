@@ -1,4 +1,4 @@
-name: Pylint
+name: DevSecOps
 
 on: [push]
 
@@ -17,10 +17,10 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt -r requirements-dev.txt
-    - name: Analysing the code with pylint
+    - name: Static Code Analysis - pylint
       run: |
         pylint composeexample/*.py
-    - name: Analysing the code with bandit
+    - name: Static Application Security Testing - bandit
       run: |
         bandit composeexample/*.py
 
