@@ -16,11 +16,11 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install -r requirements.txt -r requirements-dev.txt
+        pip install -r src/requirements.txt -r requirements-dev.txt
     - name: Static Code Analysis - pylint
       run: |
-        pylint composeexample/*.py
+        pylint src/composeexample/*.py
     - name: Static Application Security Testing - bandit
       run: |
-        bandit composeexample/*.py
+        bandit src/composeexample/*.py
 

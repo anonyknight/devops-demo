@@ -1,4 +1,4 @@
-version: "3.9"
+version: "3.3"
    
 services:
   db:
@@ -13,6 +13,7 @@ services:
     build: .
     container_name: django
     command: bash -c "
+      ./wait-for-it.sh db:5432 &&
       python manage.py migrate &&
       python manage.py runserver 0.0.0.0:8080"
     volumes:
@@ -23,9 +24,3 @@ services:
       - db
     environment:
       - SECRET_KEY='${SECRET_KEY}'
-  chrome:
-    image: selenium/standalone-chrome
-    volumes:
-      - /dev/shm:/dev/shm
-    ports:
-      - "4444:4444"
