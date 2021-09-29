@@ -19,9 +19,11 @@ services:
       - "8000:8000"
     depends_on:
       - db
-  chrome:
-    image: selenium/standalone-chrome
-    volumes:
-      - /dev/shm:/dev/shm
-    ports:
-      - "4444:4444"
+    environment:
+      - SECRET_KEY=${SECRET_KEY}
+  # chrome:
+  #   image: selenium/standalone-chrome
+  #   volumes:
+  #     - /dev/shm:/dev/shm
+  #   ports:
+  #     - "4444:4444"

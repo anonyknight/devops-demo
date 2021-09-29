@@ -7,4 +7,7 @@ This repo is to demo how DevOps works for Web Apps.
 3. Use docker-compose to deploy the app.
 
 ## Reference
-https://docs.docker.com/samples/django/
+
+[Django Docker](https://docs.docker.com/samples/django/)
+
+[Automating Terraform Deployment to Google Cloud with GitHub Actions](https://medium.com/interleap/automating-terraform-deployment-to-google-cloud-with-github-actions-17516c4fb2e5)
