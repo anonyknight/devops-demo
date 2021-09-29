@@ -11,5 +11,5 @@ def chrome_driver():
 
 
 def test_visit_site(chrome_driver):
-    chrome_driver.get('http://web:8000/')
-    assert chrome_driver.title == "The install worked successfully! Congratulations!"
+    chrome_driver.get('http://web:8080/admin')
+    assert chrome_driver.title == "Log in | Django site admin"
