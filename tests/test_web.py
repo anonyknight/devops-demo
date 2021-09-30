@@ -19,7 +19,7 @@ def instance_ip():
     )
     assert os.path.exists(TERRAFORM_OUTPUT), "Cannot find the server ip."
     with open(TERRAFORM_OUTPUT) as f:
-        ip = f.readline()
+        ip = f.read()
     pattern = re.compile(r"(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})")
     return pattern.search(ip)[0]
 
