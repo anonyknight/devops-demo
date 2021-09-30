@@ -1,6 +1,9 @@
 name: DevSecOps
 
-on: [push]
+on:
+  push:
+    paths:
+      - '**.md'
 
 jobs:
   lint-changelog:
