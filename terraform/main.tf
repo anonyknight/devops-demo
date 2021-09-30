@@ -52,7 +52,7 @@ resource "null_resource" "code" {
   connection {
     type        = "ssh"
     host        = google_compute_address.static.address
-    private_key = "${var.gce_ssh_private_key}"
+    private_key = var.gce_ssh_private_key
     user        = var.gce_ssh_user
     script_path = "/home/${var.gce_ssh_user}/tmp/copy-code.sh"
   }
@@ -75,7 +75,7 @@ resource "null_resource" "provision" {
   connection {
     type        = "ssh"
     host        = google_compute_address.static.address
-    private_key = "${var.gce_ssh_private_key}"
+    private_key = var.gce_ssh_private_key
     user        = var.gce_ssh_user
     script_path = "/home/${var.gce_ssh_user}/tmp/provision.sh"
   }
