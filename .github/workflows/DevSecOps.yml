@@ -18,6 +18,9 @@ jobs:
 
     - name: DevSkim
       uses: microsoft/DevSkim-Action@v1
+      with:
+        directory-to-scan: src/
+        should-scan-archives: false
 
   # https://github.com/marketplace/actions/trufflehog-actions-scan
   sensitive_information_scan:
@@ -70,22 +73,6 @@ jobs:
            name: Depcheck report
            path: ${{github.workspace}}/reports
 
-  # # https://github.com/marketplace/actions/owasp-zap-full-scan
-  # dynamic_application_security_testing:
-  #   runs-on: ubuntu-latest
-  #   name: Dynamic Application Security Testing
-  #   steps:
-  #     - name: Checkout
-  #       uses: actions/checkout@v2
-  #     - name: OWASP ZAP Scan
-  #       uses: zaproxy/action-full-scan@v0.3.0
-  #       with:
-  #         token: ${{ secrets.GITHUB_TOKEN }}
-  #         docker_name: 'owasp/zap2docker-stable'
-  #         target: 'https://www.zaproxy.org/'
-  #         rules_file_name: '.zap/rules.tsv'
-  #         cmd_options: '-a'
-
   # https://github.com/marketplace/actions/terraform-compliance
   compliance_as_code:
     name: Compliance As Code
@@ -121,3 +108,20 @@ jobs:
       - name: terraform-compliance
         run: |
           terraform-compliance -p plan.out.json -f git:https://github.com/terraform-compliance/user-friendly-features.git
+
+
+  # # https://github.com/marketplace/actions/owasp-zap-full-scan
+  # dynamic_application_security_testing:
+  #   runs-on: ubuntu-latest
+  #   name: Dynamic Application Security Testing
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v2
+  #     - name: OWASP ZAP Scan
+  #       uses: zaproxy/action-full-scan@v0.3.0
+  #       with:
+  #         token: ${{ secrets.GITHUB_TOKEN }}
+  #         docker_name: 'owasp/zap2docker-stable'
+  #         target: 'https://www.zaproxy.org/'
+  #         rules_file_name: '.zap/rules.tsv'
+  #         cmd_options: '-a'
