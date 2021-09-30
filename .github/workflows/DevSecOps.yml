@@ -8,19 +8,14 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
-    - name: Set up Python 3.8
-      uses: actions/setup-python@v2
+    - name: Check out code
+      uses: actions/checkout@v2
+
+    # https://github.com/marketplace/actions/markdown-linting-action
+    - name: Lint changelog file
+      uses: avtodev/markdown-lint@v1
       with:
-        python-version: 3.8
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r src/requirements.txt -r requirements-dev.txt
-    - name: Static Code Analysis - pylint
-      run: |
-        pylint src/composeexample/*.py
-    - name: Static Application Security Testing - bandit
-      run: |
-        bandit src/composeexample/*.py
+        # rules: 'src/docs/changelog.js'
+        # config: '/lint/config/changelog.yml'
+        args: './src/docs/*.md'
 
