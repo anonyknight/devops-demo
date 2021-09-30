@@ -22,12 +22,11 @@ jobs:
         directory-to-scan: src/
         should-scan-archives: false
         output-filename: devskim-results.sarif
-        output-directory: results
     - name: Upload Test results
       uses: actions/upload-artifact@master
       with:
         name: DevSkim report
-        path: ${{github.workspace}}/results
+        path: ${{github.workspace}}/devskim-results.sarif
 
   # https://github.com/marketplace/actions/trufflehog-actions-scan
   sensitive_information_scan:
@@ -116,7 +115,7 @@ jobs:
         run: |
           terraform-compliance -p plan.out.json -f git:https://github.com/terraform-compliance/user-friendly-features.git
 
-  # https://github.com/marketplace/actions/owasp-zap-full-scan
+  # https://github.com/marketplace/actions/owasp-zap-baseline-scan
   dynamic_application_security_testing:
     runs-on: ubuntu-latest
     name: Dynamic Application Security Testing
@@ -127,11 +126,11 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: OWASP ZAP Scan
-        uses: zaproxy/action-full-scan@v0.3.0
+      - name: ZAP Scan
+        uses: zaproxy/action-baseline@v0.5.0
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           docker_name: 'owasp/zap2docker-stable'
-          target: 'https://www.zaproxy.org/'
-          # rules_file_name: '.zap/rules.tsv'
+          target: 'https://www.zaproxy.org'
+          rules_file_name: '.zap/rules.tsv'
           cmd_options: '-a'
