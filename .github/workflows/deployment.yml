@@ -114,7 +114,7 @@ jobs:
       if: github.ref == 'refs/heads/master' && github.event_name == 'push'
       run: |
         terraform apply -auto-approve
-        terraform output -json > ../tests/server_info.json
+        terraform output -json | tee ../tests/server_info.json
       env:
         GOOGLE_APPLICATION_CREDENTIALS: GOOGLE_APPLICATION_CREDENTIALS.json
         TF_VAR_project_id: ${{ secrets.TF_VAR_project_id }}
@@ -134,5 +134,5 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements-dev.txt
         docker-compose up -d
-        sleep 10
+        sleep 6
         pytest

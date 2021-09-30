@@ -8,6 +8,7 @@ services:
       - -c 
       - |
         mkdocs serve --dev-addr=0.0.0.0:8000
+    restart: always 
     volumes:
       - .:/code
     ports:
