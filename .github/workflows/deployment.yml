@@ -51,7 +51,7 @@ on:
   pull_request:
 
 jobs:
-  terraform:
+  Deployment:
     name: 'Terraform'
     runs-on: ubuntu-latest
     environment: production
