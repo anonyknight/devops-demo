@@ -28,9 +28,3 @@ variable "gce_ssh_private_key" {
   type        = string
   description = "GCE SSH User private key"
 }
-
-variable "SECRET_KEY" {
-  type = string
-  # https://docs.djangoproject.com/en/3.2/ref/settings/
-  description = "Django Secret Key"
-}
