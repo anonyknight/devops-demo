@@ -1,29 +1,14 @@
 version: "3.3"
    
 services:
-  db:
-    image: postgres
-    volumes:
-      - ./data/db:/var/lib/postgresql/data
-    environment:
-      - POSTGRES_DB=postgres
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
   web:
     build: .
-    container_name: django
     command: 
       - /bin/bash
       - -c 
-      - | 
-        ./wait-for-it.sh db:5432
-        python manage.py migrate
-        python manage.py runserver 0.0.0.0:8080
+      - |
+        mkdocs serve --dev-addr=0.0.0.0:8000
     volumes:
       - .:/code
     ports:
-      - "8080:8080"
-    depends_on:
-      - db
-    environment:
-      - SECRET_KEY='${SECRET_KEY}'
+      - "8000:8000"

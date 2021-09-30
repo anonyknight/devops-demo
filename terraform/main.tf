@@ -88,10 +88,10 @@ resource "null_resource" "provision" {
   provisioner "remote-exec" {
     inline = [
       "cd /home/${var.gce_ssh_user}/src",
-      "export SECRET_KEY='${var.SECRET_KEY}'",
       # Run docker compose 
       # https://cloud.google.com/community/tutorials/docker-compose-on-container-optimized-os
-      "docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v \"$PWD:$PWD\" -w=\"$PWD\" docker/compose up"
+            "docker run -d --rm -v /var/run/docker.sock:/var/run/docker.sock -v \"$PWD:$PWD\" -w=\"$PWD\" docker/compose build",
+      "docker run -d --rm -v /var/run/docker.sock:/var/run/docker.sock -v \"$PWD:$PWD\" -w=\"$PWD\" docker/compose up"
     ]
   }
 }
