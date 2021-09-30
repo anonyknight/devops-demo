@@ -101,7 +101,6 @@ jobs:
         id: plan
         run: |
           terraform init && terraform plan -out=plan.out && terraform show -json plan.out > plan.out.json
-          more plan.out.json
         env:
           GOOGLE_APPLICATION_CREDENTIALS: GOOGLE_APPLICATION_CREDENTIALS.json
           TF_VAR_project_id: ${{ secrets.TF_VAR_project_id }}
@@ -117,20 +116,39 @@ jobs:
 
   # https://github.com/marketplace/actions/owasp-zap-baseline-scan
   dynamic_application_security_testing:
-    runs-on: ubuntu-latest
+    needs: compliance_as_code # Avoid terraform conflict
     name: Dynamic Application Security Testing
-    # defaults:
-    #   run:
-    #     shell: bash
-    #     working-directory: ./terraform
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./terraform
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+      - uses: hashicorp/setup-terraform@v1
+      - name: Prepare GCP credentials
+        run: echo "${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}" | base64 -d > GOOGLE_APPLICATION_CREDENTIALS.json
+
+      - name: Read Server IP from Terraform
+        id: plan
+        # Get the IP
+        run: |
+          terraform init
+          terraform output instance_ip_addr | grep -oE "\b([0-9]{1,3}\.){3}[0-9]{1,3}\b" > server_ip.txt
+          echo "SERVER_IP=$(head -n 1 server_ip.txt)" >> $GITHUB_ENV
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: GOOGLE_APPLICATION_CREDENTIALS.json
+          TF_VAR_project_id: ${{ secrets.TF_VAR_project_id }}
+          TF_VAR_region: ${{ secrets.TF_VAR_region }}
+          TF_VAR_zone: ${{ secrets.TF_VAR_zone }}
+          TF_VAR_gce_ssh_user: ${{ secrets.TF_VAR_gce_ssh_user }}
+          TF_VAR_gce_ssh_pub_key: ${{ secrets.TF_VAR_gce_ssh_pub_key}}
+          TF_VAR_gce_ssh_private_key: ${{ secrets.TF_VAR_gce_ssh_private_key }}
+
       - name: ZAP Scan
         uses: zaproxy/action-baseline@v0.5.0
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          docker_name: 'owasp/zap2docker-stable'
-          target: 'https://www.zaproxy.org'
-          rules_file_name: '.zap/rules.tsv'
+          target: 'https://${{ env.SERVER_IP }}:8000'
           cmd_options: '-a'
