@@ -76,7 +76,8 @@ jobs:
 
     # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
     - name: Terraform Init
-      run: pwd && terraform init
+      working-directory: ./terraform
+      run: terraform init
       env:
         GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
         TF_VAR_project_id: ${{ secrets.TF_VAR_project_id }}
@@ -88,11 +89,13 @@ jobs:
 
     # Checks that all Terraform configuration files adhere to a canonical format
     - name: Terraform Format
-      run: pwd && terraform fmt -check
+      working-directory: ./terraform
+      run: terraform fmt -check
 
     # Generates an execution plan for Terraform
     - name: Terraform Plan
-      run: pwd && terraform plan
+      working-directory: ./terraform
+      run: terraform plan
       env:
         GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
         TF_VAR_project_id: ${{ secrets.TF_VAR_project_id }}
@@ -107,8 +110,11 @@ jobs:
       # See the documentation on "strict" required status checks for more information: 
       # https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
     - name: Terraform Apply
+      working-directory: ./terraform
       if: github.ref == 'refs/heads/master' && github.event_name == 'push'
-      run: pwd && terraform apply -auto-approve
+      run: |
+        terraform apply -auto-approve
+        terraform output -json > ../tests/server_info.json
       env:
         GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
         TF_VAR_project_id: ${{ secrets.TF_VAR_project_id }}
@@ -119,10 +125,9 @@ jobs:
         TF_VAR_gce_ssh_private_key: ${{ secrets.TF_VAR_gce_ssh_private_key }}
 
     - name: Sanity Tests
+      working-directory: ./tests
       if: github.ref == 'refs/heads/master' && github.event_name == 'push'
       run: |
-        terraform output -json > ../tests/server_info.json
-        cd ../tests
         python -m pip install --upgrade pip
         pip install -r requirements-dev.txt
         docker-compose up -d
