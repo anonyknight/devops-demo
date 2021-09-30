@@ -91,9 +91,21 @@ jobs:
         GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
 
       # On push to master, build or change infrastructure according to Terraform configuration files
-      # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
+      # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". 
+      # See the documentation on "strict" required status checks for more information: 
+      # https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
     - name: Terraform Apply
       if: github.ref == 'refs/heads/master' && github.event_name == 'push'
       run: terraform apply -auto-approve
       env:
         GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
+
+    - name: Sanity Tests
+      if: github.ref == 'refs/heads/master' && github.event_name == 'push'
+      run: |
+        terraform output -json > ../tests/server_info.json
+        cd ../tests
+        python -m pip install --upgrade pip
+        pip install -r requirements-dev.txt
+        docker-compose up -d
+        pytest

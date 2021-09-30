@@ -1,33 +1,28 @@
-resource "google_compute_firewall" "default" {
-  name    = "http-firewall"
-  network = google_compute_network.default.name
-
-  allow {
-    protocol = "icmp"
-  }
+resource "google_compute_firewall" "http-server" {
+  name    = "default-allow-http"
+  network = "default"
 
   allow {
     protocol = "tcp"
-    ports    = ["80", "8080"]
+    ports    = ["80", "8000", "8080"]
   }
 
-  source_tags = ["web"]
+  // Allow traffic from everywhere to instances with an http-server tag
+  source_ranges = ["0.0.0.0/0"]
+  target_tags   = ["http-server"]
 }
 
-resource "google_compute_network" "default" {
-  name = "test-network"
-}
 
 resource "google_compute_address" "static" {
   name = "ipv4-address"
 }
 
-resource "google_compute_instance" "django_vm" {
-  name         = "django"
+resource "google_compute_instance" "docs" {
+  name         = "docs"
   machine_type = "g1-small"
   zone         = var.zone
 
-  tags = ["django"]
+  tags = ["http-server"]
 
   boot_disk {
     initialize_params {
@@ -54,7 +49,7 @@ resource "google_compute_instance" "django_vm" {
 }
 
 resource "null_resource" "code" {
-  depends_on = [google_compute_instance.django_vm]
+  depends_on = [google_compute_instance.docs]
   connection {
     type        = "ssh"
     host        = google_compute_address.static.address
@@ -90,7 +85,7 @@ resource "null_resource" "provision" {
       "cd /home/${var.gce_ssh_user}/src",
       # Run docker compose 
       # https://cloud.google.com/community/tutorials/docker-compose-on-container-optimized-os
-            "docker run -d --rm -v /var/run/docker.sock:/var/run/docker.sock -v \"$PWD:$PWD\" -w=\"$PWD\" docker/compose build",
+      "docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v \"$PWD:$PWD\" -w=\"$PWD\" docker/compose build",
       "docker run -d --rm -v /var/run/docker.sock:/var/run/docker.sock -v \"$PWD:$PWD\" -w=\"$PWD\" docker/compose up"
     ]
   }
