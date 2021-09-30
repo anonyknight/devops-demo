@@ -8,38 +8,38 @@ name: DevSecOps
 on: ["push"]
 
 jobs:
-  ACR:
+  # https://github.com/microsoft/DevSkim-Action
+  automated_code_review:
     name: Automated Code Review
     runs-on: ubuntu-latest
     steps:
     - name: Check out code
       uses: actions/checkout@v2
 
-    # https://github.com/microsoft/DevSkim-Action
     - name: DevSkim
       uses: microsoft/DevSkim-Action@v1
 
-  SIS:
+  # https://github.com/marketplace/actions/trufflehog-actions-scan
+  sensitive_information_scan:
     name: Sensitive Information Scan
     runs-on: ubuntu-latest
     steps:
     - name: Check out code
       uses: actions/checkout@v2
 
-    # https://github.com/marketplace/actions/trufflehog-actions-scan
     - name: Trufflehog
       uses: edplato/trufflehog-actions-scan@master
       with:
         scanArguments: "--regex --entropy=False --max_depth=5 --rules /regexes.json" # Add custom options here*
 
-  SCA:
+  # https://github.com/marketplace/actions/markdown-linting-action
+  static_code_analysis:
     name: Static Code Analysis
     runs-on: ubuntu-latest
     steps:
     - name: Check out code
       uses: actions/checkout@v2
 
-    # https://github.com/marketplace/actions/markdown-linting-action
     - name: Markdownlint
       uses: docker://avtodev/markdown-lint:v1 # fastest way
       with:
@@ -48,9 +48,9 @@ jobs:
         args: './src/docs/*.md'
 
   # https://github.com/dependency-check/Dependency-Check_Action
-  Software_Component_Analysis:
+  software_component_analysis:
     runs-on: ubuntu-latest
-    name: depecheck_test
+    name: Dependency Check
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -71,47 +71,47 @@ jobs:
            path: ${{github.workspace}}/reports
 
   # # https://github.com/marketplace/actions/owasp-zap-full-scan
-  # zap_scan:
-  #   runs-on: ubuntu-latest
-  #   name: Dynamic Application Security Testing - OWASP ZAP
-  #   steps:
-  #     - name: Checkout
-  #       uses: actions/checkout@v2
-  #       with:
-  #         ref: master
-  #     - name: ZAP Scan
-  #       uses: zaproxy/action-full-scan@v0.3.0
-  #       with:
-  #         token: ${{ secrets.GITHUB_TOKEN }}
-  #         docker_name: 'owasp/zap2docker-stable'
-  #         target: 'https://www.zaproxy.org/'
-  #         rules_file_name: '.zap/rules.tsv'
-  #         cmd_options: '-a'
+  dynamic_application_security_testing:
+    runs-on: ubuntu-latest
+    name: Dynamic Application Security Testing
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          ref: master
+      - name: OWASP ZAP Scan
+        uses: zaproxy/action-full-scan@v0.3.0
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          docker_name: 'owasp/zap2docker-stable'
+          target: 'https://www.zaproxy.org/'
+          rules_file_name: '.zap/rules.tsv'
+          cmd_options: '-a'
 
   # # https://github.com/mitre/inspec_tools_action
-  # inspec_check:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Compliance as Code - Inspec
-  #       run: inspec exec test.rb --reporter=json:/inspec-output/inspec_results.json
-  #     - name: Upload Inspec Results
-  #       uses: actions/upload-artifact@v2
-  #       with:
-  #         name: inspec_results
-  #         path: /inspec-output/inspec_results.json
+  compliance_as_code:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Compliance as Code - Inspec
+        run: inspec exec test.rb --reporter=json:/inspec-output/inspec_results.json
+      - name: Upload Inspec Results
+        uses: actions/upload-artifact@v2
+        with:
+          name: inspec_results
+          path: /inspec-output/inspec_results.json
 
-  # inspec_tools_compliance:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Checkout Code for Threshold
-  #       uses: actions/checkout@v2
-  #     - name: Download Inspec Results
-  #       uses: actions/download-artifact@v2
-  #       with:
-  #         name: inspec_results
-  #     - name: Inspec Tools Check Compliance
-  #       uses: mitre/inspec_tools_action@main
-  #       with:
-  #         command: compliance
-  #         resultfile: inspec_results.json
-  #         thresholdfile: threshold.yaml
+  inspec_tools_compliance:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code for Threshold
+        uses: actions/checkout@v2
+      - name: Download Inspec Results
+        uses: actions/download-artifact@v2
+        with:
+          name: inspec_results
+      - name: Inspec Tools Check Compliance
+        uses: mitre/inspec_tools_action@main
+        with:
+          command: compliance
+          resultfile: inspec_results.json
+          thresholdfile: threshold.yaml
