@@ -1,7 +1,7 @@
 import pytest
 from selenium import webdriver
-import json
 import os
+import re
 
 @pytest.fixture()
 def chrome_driver():
@@ -12,11 +12,12 @@ def chrome_driver():
 
 @pytest.fixture()
 def instance_ip():
-    TERRAFORM_OUTPUT = os.path.abspath(os.path.join(__file__,os.pardir,"server_info.json"))
+    TERRAFORM_OUTPUT = os.path.abspath(os.path.join(__file__,os.pardir,"server_ip.txt"))
     assert os.path.exists(TERRAFORM_OUTPUT), "Cannot find the server ip."
     with open(TERRAFORM_OUTPUT) as f:
-        json_output = json.load(f)
-    return json_output["instance_ip_addr"]["value"]
+        ip = f.readline()
+    pattern = re.compile(r'(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})')
+    return pattern.search(ip)[0]
         
 
 def test_site_name(chrome_driver, instance_ip):
