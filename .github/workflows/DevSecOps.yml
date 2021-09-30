@@ -3,19 +3,19 @@ name: DevSecOps
 on: [push]
 
 jobs:
-  build:
-
+  lint-changelog:
+    name: Lint changelog file
     runs-on: ubuntu-latest
-
     steps:
     - name: Check out code
       uses: actions/checkout@v2
 
-    # https://github.com/marketplace/actions/markdown-linting-action
     - name: Lint changelog file
-      uses: avtodev/markdown-lint@v1
+      uses: docker://avtodev/markdown-lint:v1 # fastest way
       with:
-        # rules: 'src/docs/changelog.js'
-        # config: '/lint/config/changelog.yml'
+        rules: '/lint/rules/changelog.js'
+        config: '/lint/config/changelog.yml'
         args: './src/docs/*.md'
 
+    # Reference
+    # https://github.com/marketplace/actions/markdown-linting-action
