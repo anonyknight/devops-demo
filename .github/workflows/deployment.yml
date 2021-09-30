@@ -115,6 +115,7 @@ jobs:
       run: |
         terraform apply -auto-approve
         terraform output instance_ip_addr > ../tests/server_ip.txt
+        more ../tests/server_ip.txt
       env:
         GOOGLE_APPLICATION_CREDENTIALS: GOOGLE_APPLICATION_CREDENTIALS.json
         TF_VAR_project_id: ${{ secrets.TF_VAR_project_id }}
