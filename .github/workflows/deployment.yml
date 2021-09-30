@@ -65,6 +65,7 @@ jobs:
     # Checkout the repository to the GitHub Actions runner
     - name: Checkout
       uses: actions/checkout@v2
+      run: ls -al
 
     # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
     - name: Setup Terraform
@@ -72,7 +73,7 @@ jobs:
 
     # Checks that all Terraform configuration files adhere to a canonical format
     - name: Go to Terraform folder
-      run: cd terraform/terraform && pwd
+      run: cd terraform && pwd
 
     # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
     - name: Terraform Init
