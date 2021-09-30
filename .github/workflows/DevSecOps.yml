@@ -71,34 +71,36 @@ jobs:
            path: ${{github.workspace}}/reports
 
   # # https://github.com/marketplace/actions/owasp-zap-full-scan
-  dynamic_application_security_testing:
-    runs-on: ubuntu-latest
-    name: Dynamic Application Security Testing
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-        with:
-          ref: master
-      - name: OWASP ZAP Scan
-        uses: zaproxy/action-full-scan@v0.3.0
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          docker_name: 'owasp/zap2docker-stable'
-          target: 'https://www.zaproxy.org/'
-          rules_file_name: '.zap/rules.tsv'
-          cmd_options: '-a'
+  # dynamic_application_security_testing:
+  #   runs-on: ubuntu-latest
+  #   name: Dynamic Application Security Testing
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v2
+  #     - name: OWASP ZAP Scan
+  #       uses: zaproxy/action-full-scan@v0.3.0
+  #       with:
+  #         token: ${{ secrets.GITHUB_TOKEN }}
+  #         docker_name: 'owasp/zap2docker-stable'
+  #         target: 'https://www.zaproxy.org/'
+  #         rules_file_name: '.zap/rules.tsv'
+  #         cmd_options: '-a'
 
-  # # https://github.com/mitre/inspec_tools_action
+  # https://github.com/mitre/inspec_tools_action
   compliance_as_code:
+    name: Compliance As Code
     runs-on: ubuntu-latest
     steps:
-      - name: Compliance as Code - Inspec
-        run: inspec exec test.rb --reporter=json:/inspec-output/inspec_results.json
-      - name: Upload Inspec Results
-        uses: actions/upload-artifact@v2
-        with:
-          name: inspec_results
-          path: /inspec-output/inspec_results.json
+    # Checkout the repository to the GitHub Actions runner
+      - uses: actions/checkout@v2
+    # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
+      - uses: hashicorp/setup-terraform@v1
+      - uses: terraform-compliance/github_action@main
+
+      - name: terraform-compliance
+        run: |
+          cd ./terraform
+          terraform-compliance -p /path/to/plan.out.json -f git:ssh://git@github.com/terraform-compliance/user-friendly-features.git
 
   inspec_tools_compliance:
     runs-on: ubuntu-latest
