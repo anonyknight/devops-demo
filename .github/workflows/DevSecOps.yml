@@ -4,13 +4,13 @@ on: [push]
 
 jobs:
   lint-changelog:
-    name: Lint changelog file
+    name: Lint changelog markdowns
     runs-on: ubuntu-latest
     steps:
     - name: Check out code
       uses: actions/checkout@v2
 
-    - name: Lint changelog file
+    - name: Lint changelog markdown
       uses: docker://avtodev/markdown-lint:v1 # fastest way
       with:
         rules: '/lint/rules/changelog.js'
