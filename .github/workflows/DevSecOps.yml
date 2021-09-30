@@ -108,6 +108,7 @@ jobs:
         id: plan
         run: |
           terraform init && terraform plan -out=plan.out && terraform show -json plan.out > plan.out.json
+          more plan.out.json
         env:
           GOOGLE_APPLICATION_CREDENTIALS: GOOGLE_APPLICATION_CREDENTIALS.json
           TF_VAR_project_id: ${{ secrets.TF_VAR_project_id }}
@@ -119,5 +120,4 @@ jobs:
 
       - name: terraform-compliance
         run: |
-          terraform-compliance -p plan.out.json -f git:ssh://git@github.com/terraform-compliance/user-friendly-features.git
-          more plan.out.json
+          terraform-compliance -p plan.out.json -f git:https://github.com/terraform-compliance/user-friendly-features.git
