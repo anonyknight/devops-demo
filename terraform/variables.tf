@@ -19,14 +19,14 @@ variable "gce_ssh_user" {
   description = "GCE SSH User"
 }
 
-variable "gce_ssh_pub_key_file" {
+variable "gce_ssh_pub_key" {
   type        = string
   description = "GCE SSH User public key"
 }
 
 variable "gce_ssh_private_key" {
   type        = string
-  description = "GCE SSH User public key"
+  description = "GCE SSH User private key"
 }
 
 variable "SECRET_KEY" {

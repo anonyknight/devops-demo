@@ -40,8 +40,7 @@ resource "google_compute_instance" "docs" {
   }
 
   metadata = {
-    # user-data = file("my_cloud_init.conf")
-    ssh-keys = "${var.gce_ssh_user}:${file(var.gce_ssh_pub_key_file)}"
+    ssh-keys = "${var.gce_ssh_user}:${var.gce_ssh_pub_key}"
   }
 
   # https://stackoverflow.com/questions/63577413/how-to-execute-scripts-remote-exec-under-google-cloud-container-optimized-os-u
@@ -53,7 +52,7 @@ resource "null_resource" "code" {
   connection {
     type        = "ssh"
     host        = google_compute_address.static.address
-    private_key = file(var.gce_ssh_private_key)
+    private_key = "${var.gce_ssh_private_key}"
     user        = var.gce_ssh_user
     script_path = "/home/${var.gce_ssh_user}/tmp/copy-code.sh"
   }
@@ -76,7 +75,7 @@ resource "null_resource" "provision" {
   connection {
     type        = "ssh"
     host        = google_compute_address.static.address
-    private_key = file(var.gce_ssh_private_key)
+    private_key = "${var.gce_ssh_private_key}"
     user        = var.gce_ssh_user
     script_path = "/home/${var.gce_ssh_user}/tmp/provision.sh"
   }
