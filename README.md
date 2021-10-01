@@ -8,6 +8,7 @@ This repo is to demo how DevOps works for open source
 Build markdown files into Static website.
 Markdown, HTML, CSS and Javascript.
 
+
 ## Steps:
 1. The release notes app use Mkdocs to generate a static website.
 2. Call Terraform to deploy this app into GCP.
