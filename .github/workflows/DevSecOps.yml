@@ -5,7 +5,8 @@ name: DevSecOps
     # paths:
     #   - 'src'
 
-on: ["push"]
+on: 
+  pull_request:
 
 jobs:
   # https://github.com/microsoft/DevSkim-Action
