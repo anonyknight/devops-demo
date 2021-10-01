@@ -152,5 +152,5 @@ jobs:
         uses: zaproxy/action-baseline@v0.5.0
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          target: 'https://${{ env.SERVER_IP }}:8000'
+          target: 'http://${{ env.SERVER_IP }}:8000'
           cmd_options: '-a'
