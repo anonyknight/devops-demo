@@ -1,3 +1,4 @@
+"""Test is a test."""
 import pytest
 from selenium import webdriver
 import os
