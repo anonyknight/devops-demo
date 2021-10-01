@@ -132,11 +132,12 @@ jobs:
 
       - name: Read Server IP from Terraform
         id: plan
-        # Get the IP
+        # Get the server IP
         run: |
           terraform init
           terraform output instance_ip_addr | grep -oE "\b([0-9]{1,3}\.){3}[0-9]{1,3}\b" > server_ip.txt
           echo "SERVER_IP=$(head -n 1 server_ip.txt)" >> $GITHUB_ENV
+          echo $SERVER_IP
         env:
           GOOGLE_APPLICATION_CREDENTIALS: GOOGLE_APPLICATION_CREDENTIALS.json
           TF_VAR_project_id: ${{ secrets.TF_VAR_project_id }}
