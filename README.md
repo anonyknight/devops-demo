@@ -22,7 +22,6 @@ Markdown, HTML, CSS and Javascript.
 
 [Prism is a lightweight, extensible syntax highlighter, built with modern web standards in mind](https://prismjs.com/)
 
-
 ## Improvement
 Investigate how to run db first, then django in terraform.
 
